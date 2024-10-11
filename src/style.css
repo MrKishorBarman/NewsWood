@@ -1,0 +1,21 @@
+/* Navbar */
+.nav-link:hover {
+    /* a:hover { */
+    border: 2px solid gray;
+      }
+    
+    .nav-link.active {
+       font-weight: bold;
+      }
+      
+    .navbar-brand{
+      font-weight: 900;
+      font-size: 30px;
+    }
+
+/* newsItem */
+.start-100 {
+  left: 92%!important;
+  z-index: 1
+}
+
