@@ -1,6 +1,6 @@
-Welcome to NewsMonkey, your go-to source for curated news from around the world!
+Welcome to NewsWood, your go-to source for curated news from around the world!
 
-About NewsMonkey is a cutting-edge news application designed to deliver the latest and most relevant news articles straight to your fingertips. Powered by the robust API of NewsAPI, we ensure that you stay informed about the happenings across various domains, including politics, technology, entertainment, sports, and more.
+About NewsWood is a cutting-edge news application designed to deliver the latest and most relevant news articles straight to your fingertips. Powered by the robust API of NewsAPI, we ensure that you stay informed about the happenings across various domains, including politics, technology, entertainment, sports, and more.
 
 Key Features Up-to-date News: Our app fetches real-time news updates from NewsAPI, ensuring that you never miss out on important events.
 
