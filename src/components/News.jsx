@@ -37,7 +37,7 @@ const News = ({ category, setProgress }) => {
   const loadAllArticles = useCallback(async () => {
     try {
       setLoading(true);
-      const url = `../JSON/${category}.json`; 
+      const url = `../public/JSON/${category}.json`; 
       let data = await fetch(url);
 
       if (!data.ok) {
