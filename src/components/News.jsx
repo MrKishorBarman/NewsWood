@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import NewsItem from './NewsItem.jsx';
 import Spinner from './Spinner.jsx';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import PropTypes from 'prop-types';
 
 const News = ({ category, setProgress }) => {
   const [articles, setArticles] = useState([]);
-  const [allArticles, setAllArticles] = useState([]); 
+  const [allArticles, setAllArticles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
   const [page, setPage] = useState(1); 
@@ -27,16 +26,13 @@ const News = ({ category, setProgress }) => {
       setProgress(100);
     };
 
-    
     window.scrollTo(0, 0);
-
     fetchInitialNews();
   }, [category, setProgress]);
 
-  
   const loadAllArticles = useCallback(async () => {
     try {
-      setLoading(true);
+      setLoading(true); 
       const url = `../JSON/${category}.json`; 
       let data = await fetch(url);
 
@@ -45,30 +41,49 @@ const News = ({ category, setProgress }) => {
       }
 
       let parsedData = await data.json();
-      console.log(parsedData); 
-
-
-      const newArticles = parsedData;
-      setAllArticles(newArticles); 
-      setTotalResults(newArticles.length); 
-      setArticles(newArticles.slice(0, pageSize)); 
+      setAllArticles(parsedData); 
+      setTotalResults(parsedData.length); 
+      setArticles(parsedData.slice(0, pageSize)); 
     } catch (error) {
       console.error('Error loading articles:', error);
     } finally {
-      setLoading(false);
+      setLoading(false); 
     }
   }, [category]);
 
-  
   const fetchMoreData = () => {
-    const startIndex = page * pageSize;
-    const endIndex = (page + 1) * pageSize;
+    if (articles.length < totalResults) {
+      setLoading(true); 
+      setTimeout(() => {
+        const startIndex = page * pageSize;
+        const endIndex = (page + 1) * pageSize;
+        
+        const newArticles = allArticles.slice(startIndex, endIndex); 
 
-    const newArticles = allArticles.slice(startIndex, endIndex); 
+        setArticles((prevArticles) => [...prevArticles, ...newArticles]); 
+        setPage(page + 1); 
 
-    setArticles((prevArticles) => [...prevArticles, ...newArticles]); 
-    setPage(page + 1); 
+        setLoading(false); 
+      }, 500); 
+    }
   };
+
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+      if (scrollTop + clientHeight >= scrollHeight - 5 && !loading && articles.length < totalResults) {
+        fetchMoreData();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);  
+    };
+  }, [loading, articles.length, totalResults]);
 
   return (
     <>
@@ -76,32 +91,25 @@ const News = ({ category, setProgress }) => {
         <b>NewsWood - Top {capitalizeFirstLetter(category)} Headlines</b>
       </h1>
 
-      {loading && <Spinner />}
-
-      <InfiniteScroll
-        dataLength={articles.length}
-        next={fetchMoreData}
-        hasMore={articles.length < totalResults} 
-        loader={<Spinner />}
-      >
-        <div className="container">
-          <div className="row">
-            {articles.map((article, index) => (
-              <div className="col-md-4" key={`${article.url}-${index}`}>
-                <NewsItem
-                  title={article.title || ''}
-                  description={article.description || ''}
-                  imageUrl={article.urlToImage || 'https://elegalmetrology.jharkhand.gov.in/japnet/images/news.jpg'}
-                  newsUrl={article.url}
-                  author={article.author}
-                  date={article.publishedAt}
-                  source={article.source.name}
-                />
-              </div>
-            ))}
-          </div>
+      <div className="container">
+        <div className="row">
+          {articles.map((article, index) => (
+            <div className="col-md-4" key={`${article.url}-${index}`}>
+              <NewsItem
+                title={article.title || ''}
+                description={article.description || ''}
+                imageUrl={article.urlToImage || 'https://elegalmetrology.jharkhand.gov.in/japnet/images/news.jpg'}
+                newsUrl={article.url}
+                author={article.author}
+                date={article.publishedAt}
+                source={article.source.name}
+              />
+            </div>
+          ))}
         </div>
-      </InfiniteScroll>
+      </div>
+
+      {loading && <Spinner />} 
     </>
   );
 };
